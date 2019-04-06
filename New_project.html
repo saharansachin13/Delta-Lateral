@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="http://cdn.babylonjs.com/babylon.max.js"></script>
+    <style>
+        #canvas {
+            width:100%;
+            height:100%;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+ <script>
+        window.addEventListener('DOMContentLoaded', function(){
+            var canvas = document.getElementById('canvas');
+
+            var engine = new BABYLON.Engine(canvas, true);
+
+        var createScene = function(){
+             var scene = new BABYLON.Scene(engine);
+           // scene.clearColor = new BABYLON.Color3.White();
+           var light = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(-1, 1, 0), scene);
+            light.diffuse = new BABYLON.Color3(1, 1, 1);
+           
+            var myMaterial = new BABYLON.StandardMaterial("myMaterial",scene);
+            myMaterial.diffuseColor = new BABYLON.Color3(1 ,0 ,0);
+            myMaterial.bumpTexture = new BABYLON.Texture("http://i.imgur.com/wGyk6os.png", scene);
+            
+            var ground = BABYLON.Mesh.CreateGround("ground",5,5,10,scene);
+            var box = BABYLON.Mesh.CreateBox("Box",1.0,scene);
+            box.position.y=14;
+            box.material = myMaterial;
+           // lines starts here
+           
+           var lines=[],i,scale=-2.5;
+           for(i=0;i<=5;++i)
+            {
+            	
+            	lines[i] = BABYLON.Mesh.CreateBox("Box",5,scene);
+                lines[6+i] = BABYLON.Mesh.CreateBox("Box",5,scene);
+                lines[i].scaling = new BABYLON.Vector3(0.01,0.01,1);
+                lines[6+i].scaling = new BABYLON.Vector3(1,0.01,0.01);
+            lines[i].position.x=scale;
+            lines[i].position.y=0.0;
+            lines[i].position.z=0.0;
+            lines[6+i].position.x=0.0;
+            lines[6+i].position.y=0.0;
+            lines[6+i].position.z=scale;
+            lines[i].material = myMaterial;
+            lines[6+i].material = myMaterial;
+            ++scale;
+            }
+
+            var flag = 0;
+            scene.actionManager = new BABYLON.ActionManager(scene);
+            scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, (evt) => {
+        if (evt.sourceEvent.key == "w" && flag == 0) {
+            box.translate(BABYLON.Axis.Z, -1, BABYLON.Space.LOCAL);
+        }
+        if (evt.sourceEvent.key == "s" && flag == 0) {
+            box.translate(BABYLON.Axis.Z, +1, BABYLON.Space.LOCAL);
+        }
+        if (evt.sourceEvent.key == "a" && flag == 0) {
+            box.translate(BABYLON.Axis.X, -1, BABYLON.Space.LOCAL);
+        }
+        if (evt.sourceEvent.key == "d" && flag == 0) {
+            box.translate(BABYLON.Axis.X, +1, BABYLON.Space.LOCAL);
+        }
+        if (evt.sourceEvent.key == " " && flag == 0) {
+            //box.translate(BABYLON.Axis.Y, , BABYLON.Space.LOCAL);
+            box.position.y=0.5;        
+        }
+
+        }));
+              var camera = new BABYLON.ArcRotateCamera("arcCam",
+                     BABYLON.Tools.ToRadians(45),
+                     BABYLON.Tools.ToRadians(45),
+                     10.0,ground.position,scene);
+             camera.attachControl(canvas,true);
+            
+            function create(){
+            	var box = BABYLON.Mesh.CreateBox("Box",1.0,scene);
+            box.position.y=6;
+            box.material = myMaterial;
+            return box;
+            }
+
+
+//            function move(box){
+            	
+            	
+           
+  //          }
+
+              scene.registerBeforeRender(function(){
+
+            	if(box.intersectsMesh(ground,false)){
+        		box.position.y+=0.0;
+        		flag = 1;
+                 
+                 //box = create();
+         		}
+        	else
+        	{
+        	    box.position.y-=.01;
+        	    flag = 0;
+             }
+
+             if(flag==1)
+             {
+             	box = create();
+             	flag = 0;
+             }
+
+            });
+
+
+            
+         //     // var camera1 = new BABYLON.FreeCamera("freeCam",new BABYLON.Vector3(-8,6,-8),scene);
+             // camera1.setTarget(BABYLON.Vector3.Zero());
+             // camera1.attachControl(canvas,true);
+              return scene;
+        }
+
+        var scene = createScene();
+        engine.runRenderLoop(function(){
+        	var box = scene.getMeshByName("Box");
+        	var ground = scene.getMeshByName("ground");
+
+         //    if(box.intersectsMesh(ground,false)){
+        	// 	box.position.y+=0.0;
+        	// 	flag = 1;
+        	// }
+        	// else
+        	// {
+        	//     box.position.y-=0.01;
+        	// }
+
+            scene.render();
+          });
+
+        });
+    </script>
+
+</body>
+</html>
+ 
