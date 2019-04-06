@@ -6,3 +6,4 @@ Functions created uptil now
 2. After pressing spacebar, box is insantly hit to the ground. 
 3. After hitting the ground, box halts there.
 4. New boxes are generated after one box hits the ground.
+5. arcrotatecamera is implemented which rotates the view around yhe ground.
